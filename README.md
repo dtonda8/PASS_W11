@@ -1,5 +1,5 @@
 # PASS_W11
-**in-built lists are allowed**, all `dict` and `sorted` are not allowed
+**in-built lists are allowed**. `dict` and `sorted` are not allowed
 
 ### Q1: Minimum Absolute Difference in BST 
 Given a Binary Search Tree (BST), return the minimum absolute difference between the values of any two different nodes in the tree.
@@ -16,9 +16,9 @@ Example 2:
 **Input**: `bst` of <img src="bst2.png" width="200">  
 **Output**: 9
 
-Explanation: 236-227 = 9
+Explanation: 236-227 = 9 is the minimum difference
 
-Note: 0 <= `TreeNode`.val <= 105
+Note: 0 <= `TreeNode`.val <= $10^5$
 
 ---
 

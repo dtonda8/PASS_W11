@@ -3,21 +3,24 @@
 Defines a Hash Table using Linear Probing for conflict resolution.
 """
 from __future__ import annotations
+
 __author__ = 'Jackson Goerner'
 __since__ = '07/02/2023'
 
 
-from typing import TypeVar, Generic
+from typing import TypeVar
+
 from data_structures.referential_array import ArrayR
 
 K = TypeVar('K')
 V = TypeVar('V')
 
+
 class FullError(Exception):
     pass
 
 
-class LinearProbeTable(Generic[K, V]):
+class LinearProbeTable:
     """
     Linear Probe Table.
 
@@ -30,7 +33,8 @@ class LinearProbeTable(Generic[K, V]):
     """
 
     # No test case should exceed 1 million entries.
-    TABLE_SIZES = [5, 13, 29, 53, 97, 193, 389, 769, 1543, 3079, 6151, 12289, 24593, 49157, 98317, 196613, 393241, 786433, 1572869]
+    TABLE_SIZES = [5, 13, 29, 53, 97, 193, 389, 769, 1543, 3079, 6151,
+                   12289, 24593, 49157, 98317, 196613, 393241, 786433, 1572869]
 
     HASH_BASE = 31
 
@@ -41,7 +45,7 @@ class LinearProbeTable(Generic[K, V]):
         if sizes is not None:
             self.TABLE_SIZES = sizes
         self.size_index = 0
-        self.array:ArrayR[tuple[K, V]] = ArrayR(self.TABLE_SIZES[self.size_index])
+        self.array: ArrayR[tuple[K, V]] = ArrayR(self.TABLE_SIZES[self.size_index])
         self.count = 0
 
     def hash(self, key: K) -> int:
@@ -98,7 +102,7 @@ class LinearProbeTable(Generic[K, V]):
         else:
             raise KeyError(key)
 
-    def keys(self) -> list[K]:
+    def keys(self) -> List[K]:
         """
         Returns all keys in the hash table.
 
@@ -110,7 +114,7 @@ class LinearProbeTable(Generic[K, V]):
                 res.append(self.array[x][0])
         return res
 
-    def values(self) -> list[V]:
+    def values(self) -> List[V]:
         """
         Returns all values in the hash table.
 

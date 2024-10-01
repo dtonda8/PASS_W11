@@ -17,7 +17,7 @@ __author__ = "Julian Garcia for the __init__ code, Maria Garcia de la Banda for 
 __docformat__ = 'reStructuredText'
 
 from ctypes import py_object
-from typing import TypeVar, Generic
+from typing import Generic, TypeVar
 
 T = TypeVar('T')
 
@@ -30,8 +30,8 @@ class ArrayR(Generic[T]):
         """
         if length <= 0:
             raise ValueError("Array length should be larger than 0.")
-        self.array = (length * py_object)() # initialises the space
-        self.array[:] =  [None for _ in range(length)]
+        self.array = (length * py_object)()  # initialises the space
+        self.array[:] = [None for _ in range(length)]
 
     def __len__(self) -> int:
         """ Returns the length of the array

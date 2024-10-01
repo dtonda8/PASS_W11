@@ -7,12 +7,14 @@ __author__ = 'Maria Garcia de la Banda, modified by Brendon Taylor and Alexey Ig
 __docformat__ = 'reStructuredText'
 
 from abc import ABC, abstractmethod
-from typing import TypeVar, Generic
+from typing import Generic, TypeVar
+
 T = TypeVar('T')
 
 
 class Stack(ABC, Generic[T]):
     """ Abstract Stack class. """
+
     def __init__(self) -> None:
         """ Object initializer. """
         self.length = 0

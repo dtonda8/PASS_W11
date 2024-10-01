@@ -1,6 +1,4 @@
-""" 
-    COPIED FROM A3-SCAFFOLD
-    Binary Search Tree ADT.
+""" Binary Search Tree ADT.
     Defines a Binary Search Tree with linked nodes.
     Each node contains a key and item as well as references to the children.
 """
@@ -10,11 +8,12 @@ from __future__ import annotations
 __author__ = 'Brendon Taylor, modified by Alexey Ignatiev, further modified by Jackson Goerner'
 __docformat__ = 'reStructuredText'
 
-from typing import TypeVar, Generic
+import math
+import sys
+from typing import Generic, TypeVar
+
 from data_structures.linked_stack import LinkedStack
 from data_structures.node import TreeNode
-import sys
-
 
 # generic types
 K = TypeVar('K')
@@ -33,7 +32,7 @@ class BSTPreOrderIterator:
         self.stack = LinkedStack()
         self.stack.push(root)
 
-    def __iter__(self) -> BSTInOrderIterator:
+    def __iter__(self) -> BSTPreOrderIterator:
         """ Standard __iter__() method for initialisers. Returns itself. """
 
         return self
@@ -98,9 +97,8 @@ class BSTPostOrderIterator:
         self.stack = LinkedStack()
         self.stack.push((root, False))
 
-    def __iter__(self) -> BSTInOrderIterator:
+    def __iter__(self) -> BSTPostOrderIterator:
         """ Standard __iter__() method for initialisers. Returns itself. """
-
         return self
 
     def __next__(self) -> TreeNode[K, I]:
@@ -185,9 +183,9 @@ class BinarySearchTree(Generic[K, I]):
             return self.get_tree_node_by_key_aux(current.right, key)
 
     def __setitem__(self, key: K, item: I) -> None:
-        self.root = self.insert_aux(self.root, key, item)
+        self.root = self.insert_aux(self.root, key, item, 1)
 
-    def insert_aux(self, current: TreeNode, key: K, item: I) -> TreeNode:
+    def insert_aux(self, current: TreeNode, key: K, item: I, current_depth: int) -> TreeNode:
         """
             Attempts to insert an item into the tree, it uses the Key to insert it
             :complexity best: O(CompK) inserts the item at the root.
@@ -196,12 +194,12 @@ class BinarySearchTree(Generic[K, I]):
             CompK is the complexity of comparing the keys
         """
         if current is None:  # base case: at the leaf
-            current = TreeNode(key, item)
+            current = TreeNode(key, item, current_depth)
             self.length += 1
         elif key < current.key:
-            current.left = self.insert_aux(current.left, key, item)
+            current.left = self.insert_aux(current.left, key, item, current_depth + 1)
         elif key > current.key:
-            current.right = self.insert_aux(current.right, key, item)
+            current.right = self.insert_aux(current.right, key, item, current_depth + 1)
         else:  # key == current.key
             raise ValueError('Inserting duplicate item')
         return current
@@ -218,7 +216,7 @@ class BinarySearchTree(Generic[K, I]):
         if current is None:  # key not found
             raise ValueError('Deleting non-existent item')
         elif key < current.key:
-            current.left  = self.delete_aux(current.left, key)
+            current.left = self.delete_aux(current.left, key)
         elif key > current.key:
             current.right = self.delete_aux(current.right, key)
         else:  # we found our key => do actual deletion
@@ -234,7 +232,7 @@ class BinarySearchTree(Generic[K, I]):
 
             # general case => find a successor
             succ = self.get_successor(current)
-            current.key  = succ.key
+            current.key = succ.key
             current.item = succ.item
             current.right = self.delete_aux(current.right, succ.key)
 
@@ -251,7 +249,7 @@ class BinarySearchTree(Generic[K, I]):
             return None
         return self.get_minimal(current.right)
 
-    def get_minimal(self, current: TreeNode) -> TreeNode:
+    def get_minimal(self, current: TreeNode) -> TreeNode | None:
         """
             Get a node having the smallest key in the current sub-tree.
         """
@@ -261,10 +259,32 @@ class BinarySearchTree(Generic[K, I]):
             return current
         return self.get_minimal(current.left)
 
+    def get_maximal(self, current: TreeNode) -> TreeNode | None:
+        """
+            Get a node having the largest key in the current sub-tree.
+        """
+        if current is None:
+            return None
+        if current.right is None:
+            return current
+        return self.get_maximal(current.right)
+
     def is_leaf(self, current: TreeNode) -> bool:
         """ Simple check whether or not the node is a leaf. """
 
         return current.left is None and current.right is None
+
+    def is_balanced(self) -> bool:
+        target_depth: int = math.ceil(math.log(len(self), 2))
+        return self.get_depth_aux(self.root, target_depth)
+
+    def get_depth_aux(self, current: TreeNode, target_depth: int) -> bool:
+        if current is None:
+            return True
+        if self.is_leaf(current):
+            cond = target_depth - 1 <= current.depth <= target_depth + 1
+            return cond
+        return self.get_depth_aux(current.left, target_depth) and self.get_depth_aux(current.right, target_depth)
 
     def draw(self, to=sys.stdout):
         """ Draw the tree in the terminal. """
@@ -297,8 +317,8 @@ if __name__ == "__main__":
     bst[6] = "RL"
     bst[8] = "RR"
 
-    pre_nodes  = [node.item for node in BSTPreOrderIterator(bst.root)]
-    in_nodes   = [node.item for node in BSTInOrderIterator(bst.root)]
+    pre_nodes = [node.item for node in BSTPreOrderIterator(bst.root)]
+    in_nodes = [node.item for node in BSTInOrderIterator(bst.root)]
     post_nodes = [node.item for node in BSTPostOrderIterator(bst.root)]
     print(pre_nodes)
     print(in_nodes)
